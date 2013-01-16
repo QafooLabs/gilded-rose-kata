@@ -2,7 +2,7 @@
     "name": "qafoo/gilded-rose-kata",
     "autoload": {
         "psr-0": {
-            "GildedRose\\Tests\\": "src/",
+            "GildedRose\\Tests\\": "tests/",
             "GildedRose\\": "src/"
         }
     }
