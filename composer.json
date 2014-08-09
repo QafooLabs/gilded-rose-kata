@@ -5,6 +5,18 @@
             "GildedRose\\Tests\\": "tests/",
             "GildedRose\\": "src/"
         }
+    },
+    "require": {
+        "php": ">=5.3.3"
+    },
+
+    "require-dev": {
+        "phpunit/phpunit": "~3.7"
+    },
+
+    "config": {
+        "process-timeout": 30000,
+        "bin-dir": "bin"
     }
 }
 
