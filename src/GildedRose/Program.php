@@ -100,24 +100,18 @@ class Program
      */
     private function updateQualityOfItem(Item $item)
     {
-        if (!$this->isSpecialItem($item) && $item->quality > 0) {
-            $item->quality = $item->quality - 1;
+        if (!$this->isSpecialItem($item)) {
+            $this->decrementQuality($item);
         } else {
-            if ($item->quality < 50) {
-                $item->quality = $item->quality + 1;
+            $this->incrementQuality($item);
 
-                if ($this->isBackstagePassesItem($item)) {
-                    if ($item->sellIn < 11) {
-                        if ($item->quality < 50) {
-                            $item->quality = $item->quality + 1;
-                        }
-                    }
+            if ($this->isBackstagePassesItem($item)) {
+                if ($item->sellIn < 11) {
+                    $this->incrementQuality($item);
+                }
 
-                    if ($item->sellIn < 6) {
-                        if ($item->quality < 50) {
-                            $item->quality = $item->quality + 1;
-                        }
-                    }
+                if ($item->sellIn < 6) {
+                    $this->incrementQuality($item);
                 }
             }
         }
@@ -128,19 +122,13 @@ class Program
 
         if ($item->sellIn < 0) {
             if (!$this->isAgedBrieItem($item)) {
-                if (!$this->isBackstagePassesItem($item)) {
-                    if ($item->quality > 0) {
-                        if (!$this->isSulfurasItem($item)) {
-                            $item->quality = $item->quality - 1;
-                        }
-                    }
+                if (!$this->isBackstagePassesItem($item) && !$this->isSulfurasItem($item)) {
+                    $this->decrementQuality($item);
                 } else {
-                    $item->quality = $item->quality - $item->quality;
+                    $item->quality = 0;
                 }
             } else {
-                if ($item->quality < 50) {
-                    $item->quality = $item->quality + 1;
-                }
+                $this->incrementQuality($item);
             }
         }
     }
@@ -181,5 +169,34 @@ class Program
     private function isSulfurasItem(Item $item)
     {
         return $item->name == "Sulfuras, Hand of Ragnaros";
+    }
+
+    /**
+     * @param Item $item
+     */
+    private function incrementQuality(Item $item)
+    {
+        if (!$this->isSulfurasItem($item)) {
+            $item->quality = min($item->quality + 1, 50);
+        }
+    }
+
+    /**
+     * @param Item $item
+     */
+    private function decrementQuality(Item $item)
+    {
+        if (!$this->isSulfurasItem($item)) {
+            $item->quality = max($item->quality - 1, 0);
+        }
+    }
+
+    /**
+     * @param Item $item
+     * @return bool
+     */
+    private function hasQualityLessThanFifty(Item $item)
+    {
+        return $item->quality < 50;
     }
 }
