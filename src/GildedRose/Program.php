@@ -116,6 +116,51 @@ class Program
     }
 
     /**
+     * @param Item $item
+     */
+    private function updateQualityOfNormalItem(Item $item)
+    {
+        $this->decrementQuality($item);
+
+        if ($this->hasSellDatePassed($item)) {
+            $this->decrementQuality($item);
+        }
+    }
+
+    /**
+     * @param Item $item
+     */
+    private function updateQualityOfBackstagePassesItem(Item $item)
+    {
+        if ($this->hasSellDatePassed($item)) {
+            $item->quality = 0;
+            return;
+        }
+
+        $this->incrementQuality($item);
+
+        if ($item->sellIn < 11) {
+            $this->incrementQuality($item);
+        }
+
+        if ($item->sellIn < 6) {
+            $this->incrementQuality($item);
+        }
+    }
+
+    /**
+     * @param Item $item
+     */
+    private function updateQualityOfAgedBrieItem(Item $item)
+    {
+        $this->incrementQuality($item);
+
+        if ($this->hasSellDatePassed($item)) {
+            $this->incrementQuality($item);
+        }
+    }
+
+    /**
      * @param  Item $item
      * @return bool
      */
@@ -178,46 +223,10 @@ class Program
 
     /**
      * @param Item $item
+     * @return bool
      */
-    private function updateQualityOfNormalItem(Item $item)
+    private function hasSellDatePassed(Item $item)
     {
-        $this->decrementQuality($item);
-
-        if ($item->sellIn < 0) {
-            $this->decrementQuality($item);
-        }
-    }
-
-    /**
-     * @param Item $item
-     */
-    private function updateQualityOfBackstagePassesItem(Item $item)
-    {
-        if ($item->sellIn < 0) {
-            $item->quality = 0;
-            return;
-        }
-
-        $this->incrementQuality($item);
-
-        if ($item->sellIn < 11) {
-            $this->incrementQuality($item);
-        }
-
-        if ($item->sellIn < 6) {
-            $this->incrementQuality($item);
-        }
-    }
-
-    /**
-     * @param Item $item
-     */
-    private function updateQualityOfAgedBrieItem(Item $item)
-    {
-        $this->incrementQuality($item);
-
-        if ($item->sellIn < 0) {
-            $this->incrementQuality($item);
-        }
+        return $item->sellIn < 0;
     }
 }
