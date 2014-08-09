@@ -106,12 +106,14 @@ class Program
     {
         $item->sellIn = $item->sellIn - 1;
 
-        if ($this->isNormalItem($item)) {
-            $this->updateQualityOfNormalItem($item);
-        } elseif ($this->isAgedBrieItem($item)) {
+        if ($this->isAgedBrieItem($item)) {
             $this->updateQualityOfAgedBrieItem($item);
         } elseif ($this->isBackstagePassesItem($item)) {
             $this->updateQualityOfBackstagePassesItem($item);
+        } elseif ($this->isConjuredItem($item)) {
+            $this->updateQualityOfConjuredItem($item);
+        } else {
+            $this->updateQualityOfNormalItem($item);
         }
     }
 
@@ -161,21 +163,12 @@ class Program
     }
 
     /**
-     * @param  Item $item
-     * @return bool
+     * @param Item $item
      */
-    private function isNormalItem(Item $item)
+    private function updateQualityOfConjuredItem(Item $item)
     {
-        return !$this->isSpecialItem($item);
-    }
-
-    /**
-     * @param  Item $item
-     * @return bool
-     */
-    private function isSpecialItem(Item $item)
-    {
-        return $this->isBackstagePassesItem($item) || $this->isAgedBrieItem($item);
+        $this->updateQualityOfNormalItem($item);
+        $this->updateQualityOfNormalItem($item);
     }
 
     /**
@@ -191,9 +184,18 @@ class Program
      * @param Item $item
      * @return bool
      */
+    private function isConjuredItem(Item $item)
+    {
+        return false !== strpos($item->name, 'Conjured');
+    }
+
+    /**
+     * @param Item $item
+     * @return bool
+     */
     private function isBackstagePassesItem(Item $item)
     {
-        return $item->name == "Backstage passes to a TAFKAL80ETC concert";
+        return false !== strpos($item->name, 'Backstage');
     }
 
     /**
@@ -202,7 +204,7 @@ class Program
      */
     private function isSulfurasItem(Item $item)
     {
-        return $item->name == "Sulfuras, Hand of Ragnaros";
+        return false !== strpos($item->name, 'Sulfuras');
     }
 
     /**
