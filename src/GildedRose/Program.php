@@ -49,30 +49,30 @@ class Program
 {
     private $items = array();
 
-//    public static function Main()
-//    {
-//        echo "HELLO\n";
-//
-//        $app = new Program(array(
-//              new Item(array( 'name' => "+5 Dexterity Vest",'sellIn' => 10,'quality' => 20)),
-//              new Item(array( 'name' => "Aged Brie",'sellIn' => 2,'quality' => 0)),
-//              new Item(array( 'name' => "Elixir of the Mongoose",'sellIn' => 5,'quality' => 7)),
-//              new Item(array( 'name' => "Sulfuras, Hand of Ragnaros",'sellIn' => 0,'quality' => 80)),
-//              new Item(array(
-//                     'name' => "Backstage passes to a TAFKAL80ETC concert",
-//                     'sellIn' => 15,
-//                     'quality' => 20
-//              )),
-//              new Item(array('name' => "Conjured Mana Cake",'sellIn' => 3,'quality' => 6)),
-//        ));
-//
-//        $app->UpdateQuality();
-//
-//        echo sprintf("%50s - %7s - %7s\n", "Name", "SellIn", "Quality");
-//        foreach ($app->items as $item) {
-//            echo sprintf("%50s - %7d - %7d\n", $item->name, $item->sellIn, $item->quality);
-//        }
-//    }
+    public static function Main()
+    {
+        echo "HELLO\n";
+
+        $app = new Program(array(
+              new Item(array( 'name' => "+5 Dexterity Vest",'sellIn' => 10,'quality' => 20)),
+              new Item(array( 'name' => "Aged Brie",'sellIn' => 2,'quality' => 0)),
+              new Item(array( 'name' => "Elixir of the Mongoose",'sellIn' => 5,'quality' => 7)),
+              new Item(array( 'name' => "Sulfuras, Hand of Ragnaros",'sellIn' => 0,'quality' => 80)),
+              new Item(array(
+                     'name' => "Backstage passes to a TAFKAL80ETC concert",
+                     'sellIn' => 15,
+                     'quality' => 20
+              )),
+              new Item(array('name' => "Conjured Mana Cake",'sellIn' => 3,'quality' => 6)),
+        ));
+
+        $app->UpdateQuality();
+
+        echo sprintf("%50s - %7s - %7s\n", "Name", "SellIn", "Quality");
+        foreach ($app->items as $item) {
+            echo sprintf("%50s - %7d - %7d\n", $item->name, $item->sellIn, $item->quality);
+        }
+    }
 
     public function __construct(array $items)
     {
@@ -84,7 +84,7 @@ class Program
         for ($i = 0; $i < count($this->items); $i++) {
             $item = $this->items[$i];
             if (!$this->isSulfurasItem($item)) {
-                $this->updateQualityOfItem($item);
+                $this->updateItem($item);
             }
         }
     }
@@ -98,9 +98,11 @@ class Program
     }
 
     /**
+     * Update quality and sellIn of Item.
+     *
      * @param Item $item
      */
-    private function updateQualityOfItem(Item $item)
+    private function updateItem(Item $item)
     {
         $item->sellIn = $item->sellIn - 1;
 
@@ -111,10 +113,12 @@ class Program
 
         if ($this->isAgedBrieItem($item)) {
             $this->updateQualityOfAgedBrieItem($item);
+            return;
         }
 
         if ($this->isBackstagePassesItem($item)) {
             $this->updateQualityOfBackstagePassesItem($item);
+            return;
         }
     }
 
@@ -168,9 +172,7 @@ class Program
      */
     private function incrementQuality(Item $item)
     {
-        if (!$this->isSulfurasItem($item)) {
-            $item->quality = min($item->quality + 1, 50);
-        }
+        $item->quality = min($item->quality + 1, 50);
     }
 
     /**
@@ -178,9 +180,7 @@ class Program
      */
     private function decrementQuality(Item $item)
     {
-        if (!$this->isSulfurasItem($item)) {
-            $item->quality = max($item->quality - 1, 0);
-        }
+        $item->quality = max($item->quality - 1, 0);
     }
 
     /**
@@ -200,6 +200,11 @@ class Program
      */
     private function updateQualityOfBackstagePassesItem(Item $item)
     {
+        if ($item->sellIn < 0) {
+            $item->quality = 0;
+            return;
+        }
+
         $this->incrementQuality($item);
 
         if ($item->sellIn < 11) {
@@ -208,10 +213,6 @@ class Program
 
         if ($item->sellIn < 6) {
             $this->incrementQuality($item);
-        }
-
-        if ($item->sellIn < 0) {
-            $item->quality = 0;
         }
     }
 
