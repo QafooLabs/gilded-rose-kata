@@ -109,23 +109,19 @@ class Program
             return;
         }
 
-        $this->incrementQuality($item);
+        if ($this->isAgedBrieItem($item)) {
+            $this->updateQualityOfAgedBrieItem($item);
+        }
 
         if ($this->isBackstagePassesItem($item)) {
-            if ($item->sellIn < 11) {
-                $this->incrementQuality($item);
-            }
-
-            if ($item->sellIn < 6) {
-                $this->incrementQuality($item);
-            }
+            $this->updateQualityOfBackstagePassesItem($item);
         }
 
         if ($item->sellIn < 0) {
             if ($this->isBackstagePassesItem($item)) {
                 $item->quality = 0;
             } elseif ($this->isAgedBrieItem($item)) {
-                $this->incrementQuality($item);
+                $this->updateQualityOfAgedBrieItem($item);
             }
         }
     }
@@ -201,8 +197,33 @@ class Program
     private function updateQualityOfNormalItem(Item $item)
     {
         $this->decrementQuality($item);
+
         if ($item->sellIn < 0) {
             $this->decrementQuality($item);
         }
+    }
+
+    /**
+     * @param Item $item
+     */
+    private function updateQualityOfBackstagePassesItem(Item $item)
+    {
+        $this->incrementQuality($item);
+
+        if ($item->sellIn < 11) {
+            $this->incrementQuality($item);
+        }
+
+        if ($item->sellIn < 6) {
+            $this->incrementQuality($item);
+        }
+    }
+
+    /**
+     * @param Item $item
+     */
+    private function updateQualityOfAgedBrieItem(Item $item)
+    {
+        $this->incrementQuality($item);
     }
 }
