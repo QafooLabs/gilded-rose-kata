@@ -116,14 +116,6 @@ class Program
         if ($this->isBackstagePassesItem($item)) {
             $this->updateQualityOfBackstagePassesItem($item);
         }
-
-        if ($item->sellIn < 0) {
-            if ($this->isBackstagePassesItem($item)) {
-                $item->quality = 0;
-            } elseif ($this->isAgedBrieItem($item)) {
-                $this->updateQualityOfAgedBrieItem($item);
-            }
-        }
     }
 
     /**
@@ -217,6 +209,10 @@ class Program
         if ($item->sellIn < 6) {
             $this->incrementQuality($item);
         }
+
+        if ($item->sellIn < 0) {
+            $item->quality = 0;
+        }
     }
 
     /**
@@ -225,5 +221,9 @@ class Program
     private function updateQualityOfAgedBrieItem(Item $item)
     {
         $this->incrementQuality($item);
+
+        if ($item->sellIn < 0) {
+            $this->incrementQuality($item);
+        }
     }
 }
