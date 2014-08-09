@@ -99,8 +99,8 @@ class GildedRoseTest extends \PHPUnit_Framework_TestCase
                             'quality' => 0
                         )
                     ),
-                    new Item(array('name' => "Conjured Mana Cake",'sellIn' => 2,'quality' => 5)),
-                    new Item(array('name' => "Conjured Mana Cake",'sellIn' => -1,'quality' => 4)),
+                    new Item(array('name' => "Conjured Mana Cake",'sellIn' => 2,'quality' => 4)),
+                    new Item(array('name' => "Conjured Mana Cake",'sellIn' => -1,'quality' => 2)),
                 ),
             ),
         );
