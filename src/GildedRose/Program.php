@@ -108,17 +108,10 @@ class Program
 
         if ($this->isNormalItem($item)) {
             $this->updateQualityOfNormalItem($item);
-            return;
-        }
-
-        if ($this->isAgedBrieItem($item)) {
+        } elseif ($this->isAgedBrieItem($item)) {
             $this->updateQualityOfAgedBrieItem($item);
-            return;
-        }
-
-        if ($this->isBackstagePassesItem($item)) {
+        } elseif ($this->isBackstagePassesItem($item)) {
             $this->updateQualityOfBackstagePassesItem($item);
-            return;
         }
     }
 
