@@ -83,7 +83,9 @@ class Program
     {
         for ($i = 0; $i < count($this->items); $i++) {
             $item = $this->items[$i];
-            $this->updateQualityOfItem($item);
+            if (!$this->isSulfurasItem($item)) {
+                $this->updateQualityOfItem($item);
+            }
         }
     }
 
@@ -100,34 +102,29 @@ class Program
      */
     private function updateQualityOfItem(Item $item)
     {
-        if (!$this->isSpecialItem($item)) {
-            $this->decrementQuality($item);
-        } else {
-            $this->incrementQuality($item);
+        $item->sellIn = $item->sellIn - 1;
 
-            if ($this->isBackstagePassesItem($item)) {
-                if ($item->sellIn < 11) {
-                    $this->incrementQuality($item);
-                }
+        if ($this->isNormalItem($item)) {
+            $this->updateQualityOfNormalItem($item);
+            return;
+        }
 
-                if ($item->sellIn < 6) {
-                    $this->incrementQuality($item);
-                }
+        $this->incrementQuality($item);
+
+        if ($this->isBackstagePassesItem($item)) {
+            if ($item->sellIn < 11) {
+                $this->incrementQuality($item);
+            }
+
+            if ($item->sellIn < 6) {
+                $this->incrementQuality($item);
             }
         }
 
-        if (!$this->isSulfurasItem($item)) {
-            $item->sellIn = $item->sellIn - 1;
-        }
-
         if ($item->sellIn < 0) {
-            if (!$this->isAgedBrieItem($item)) {
-                if (!$this->isBackstagePassesItem($item) && !$this->isSulfurasItem($item)) {
-                    $this->decrementQuality($item);
-                } else {
-                    $item->quality = 0;
-                }
-            } else {
+            if ($this->isBackstagePassesItem($item)) {
+                $item->quality = 0;
+            } elseif ($this->isAgedBrieItem($item)) {
                 $this->incrementQuality($item);
             }
         }
@@ -137,11 +134,18 @@ class Program
      * @param  Item $item
      * @return bool
      */
+    private function isNormalItem(Item $item)
+    {
+        return !$this->isSpecialItem($item);
+    }
+
+    /**
+     * @param  Item $item
+     * @return bool
+     */
     private function isSpecialItem(Item $item)
     {
-        return $this->isBackstagePassesItem($item)
-                || $this->isAgedBrieItem($item)
-                || $this->isSulfurasItem($item);
+        return $this->isBackstagePassesItem($item) || $this->isAgedBrieItem($item);
     }
 
     /**
@@ -193,10 +197,12 @@ class Program
 
     /**
      * @param Item $item
-     * @return bool
      */
-    private function hasQualityLessThanFifty(Item $item)
+    private function updateQualityOfNormalItem(Item $item)
     {
-        return $item->quality < 50;
+        $this->decrementQuality($item);
+        if ($item->sellIn < 0) {
+            $this->decrementQuality($item);
+        }
     }
 }
